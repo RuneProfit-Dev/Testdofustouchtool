@@ -314,8 +314,8 @@ private fun luxuryFieldColors(accent: Color = MaterialTheme.colorScheme.primary)
     OutlinedTextFieldDefaults.colors(
         focusedBorderColor = accent,
         unfocusedBorderColor = accent.copy(alpha = 0.48f),
-        focusedContainerColor = Color(0xFF12151B).copy(alpha = 0.92f),
-        unfocusedContainerColor = Color(0xFF12151B).copy(alpha = 0.78f),
+        focusedContainerColor = Color(0xFF0A0B0E).copy(alpha = 0.96f),
+        unfocusedContainerColor = Color(0xFF0A0B0E).copy(alpha = 0.90f),
         cursorColor = accent,
         focusedLabelColor = accent,
         unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant

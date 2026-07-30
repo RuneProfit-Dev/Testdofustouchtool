@@ -2,10 +2,10 @@ package com.runeprofittouch.app.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Obsidian = Color(0xFF090B0F)
-val ObsidianSoft = Color(0xFF101319)
-val Graphite = Color(0xFF171B22)
-val GraphiteRaised = Color(0xFF20252E)
+val Obsidian = Color(0xFF080909)
+val ObsidianSoft = Color(0xFF0D0E0E)
+val Graphite = Color(0xFF141414)
+val GraphiteRaised = Color(0xFF1B1A18)
 val AntiqueGold = Color(0xFFC89B4A)
 val BrightGold = Color(0xFFF1C76A)
 val Emerald = Color(0xFF26D07C)
