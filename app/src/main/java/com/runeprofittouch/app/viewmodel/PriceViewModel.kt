@@ -55,6 +55,7 @@ class PriceViewModel(application: Application) : AndroidViewModel(application) {
     val runeFilterOptions = RuneEstimator.availableRuneNames()
     val sortMode = MutableStateFlow(ItemSortMode.PROFIT_DESCENDING)
     val isFiltering = MutableStateFlow(false)
+    val filteringMessage = MutableStateFlow("MISE À JOUR…")
     private var filteringJob: Job? = null
     private val selectedItemId = MutableStateFlow<Int?>(null)
     val selectedItem = MutableStateFlow<ItemEntity?>(null)
@@ -276,8 +277,9 @@ class PriceViewModel(application: Application) : AndroidViewModel(application) {
             initialValue = null
         )
 
-    private fun showFilteringIndicator() {
+    private fun showFilteringIndicator(message: String = "MISE À JOUR…") {
         filteringJob?.cancel()
+        filteringMessage.value = message
         isFiltering.value = true
         filteringJob = viewModelScope.launch {
             delay(220L)
@@ -321,7 +323,7 @@ class PriceViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun toggleRuneFilter(runeName: String) {
-        showFilteringIndicator()
+        showFilteringIndicator("RECHERCHE DES ÉQUIPEMENTS…")
         selectedRuneFilters.value =
             if (runeName in selectedRuneFilters.value) {
                 selectedRuneFilters.value - runeName
@@ -331,7 +333,7 @@ class PriceViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun clearRuneFilters() {
-        showFilteringIndicator()
+        showFilteringIndicator("RECHERCHE DES ÉQUIPEMENTS…")
         selectedRuneFilters.value = emptySet()
     }
 

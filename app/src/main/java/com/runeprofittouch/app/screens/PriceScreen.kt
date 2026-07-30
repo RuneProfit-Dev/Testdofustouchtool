@@ -152,6 +152,7 @@ fun PriceScreen(
     val manualCraftCost by priceViewModel.manualCraftCostText.collectAsState()
     val coefficient by priceViewModel.crushingCoefficientText.collectAsState()
     val isFiltering by priceViewModel.isFiltering.collectAsState()
+    val filteringMessage by priceViewModel.filteringMessage.collectAsState()
 
     var sortMenuExpanded by remember { mutableStateOf(false) }
     var runeFilterDialogVisible by remember { mutableStateOf(false) }
@@ -308,7 +309,7 @@ fun PriceScreen(
                     ) {
                         CircularProgressIndicator(color = BrightGold, trackColor = AntiqueGold.copy(alpha = .25f))
                         Spacer(Modifier.height(12.dp))
-                        Text("MISE À JOUR…", color = BrightGold, fontWeight = FontWeight.Bold)
+                        Text(filteringMessage, color = BrightGold, fontWeight = FontWeight.Bold)
                     }
                 }
             }

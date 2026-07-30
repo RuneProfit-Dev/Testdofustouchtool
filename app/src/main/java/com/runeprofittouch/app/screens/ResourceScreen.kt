@@ -10,7 +10,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -41,16 +43,21 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.draw.drawBehind
 import com.runeprofittouch.app.data.ServerStore
 import com.runeprofittouch.app.database.PriceEntity
 import com.runeprofittouch.app.database.ResourceEntity
 import com.runeprofittouch.app.domain.PriceFreshness
 import com.runeprofittouch.app.domain.ProfitabilityCalculator
 import com.runeprofittouch.app.ui.theme.Amber
+import com.runeprofittouch.app.ui.theme.AntiqueGold
+import com.runeprofittouch.app.ui.theme.BrightGold
+import com.runeprofittouch.app.ui.theme.Ivory
 import com.runeprofittouch.app.ui.theme.Ember
 import com.runeprofittouch.app.ui.theme.Emerald
 import com.runeprofittouch.app.ui.theme.LuxuryBackground
@@ -94,23 +101,37 @@ private fun CatalogPriceScreen(
     var filtersExpanded by remember { mutableStateOf(false) }
 
     LuxuryBackground(Modifier.fillMaxSize()) {
-        Column(Modifier.fillMaxSize()) {
+        Column(
+            Modifier
+                .fillMaxSize()
+                .padding(horizontal = 10.dp, vertical = 7.dp)
+                .drawBehind {
+                    drawRoundRect(
+                        color = Color.Black.copy(alpha = 0.42f),
+                        topLeft = Offset(5.dp.toPx(), 9.dp.toPx()),
+                        size = androidx.compose.ui.geometry.Size(size.width - 10.dp.toPx(), size.height - 12.dp.toPx()),
+                        cornerRadius = androidx.compose.ui.geometry.CornerRadius(18.dp.toPx())
+                    )
+                }
+                .background(Color(0x9C090A0D), RoundedCornerShape(18.dp))
+        ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(
-                        Brush.verticalGradient(
-                            listOf(Color(0xFF12151B), Color.Transparent)
-                        )
-                    )
-                    .padding(horizontal = 20.dp, vertical = 18.dp),
+                    .background(Brush.verticalGradient(listOf(Color(0xFF17130C), Color.Transparent)))
+                    .padding(horizontal = 14.dp, vertical = 12.dp),
                 verticalArrangement = Arrangement.spacedBy(14.dp)
             ) {
                 Text(
-                    text = "$title — $server",
+                    text = title.uppercase(),
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Black,
-                    color = MaterialTheme.colorScheme.onBackground
+                    color = BrightGold
+                )
+                Text(
+                    text = server,
+                    color = Ivory.copy(alpha = 0.72f),
+                    style = MaterialTheme.typography.bodySmall
                 )
                 OutlinedTextField(
                     value = searchText,
@@ -124,7 +145,7 @@ private fun CatalogPriceScreen(
                 )
                 LuxuryCard(
                     modifier = Modifier.fillMaxWidth(),
-                    accent = com.runeprofittouch.app.ui.theme.AntiqueGold,
+                    accent = AntiqueGold,
                     onClick = { filtersExpanded = !filtersExpanded },
                     corner = 16.dp
                 ) {
@@ -132,7 +153,7 @@ private fun CatalogPriceScreen(
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(Icons.Filled.Tune, null, tint = com.runeprofittouch.app.ui.theme.BrightGold)
+                        Icon(Icons.Filled.Tune, null, tint = BrightGold)
                         Column(Modifier.weight(1f).padding(start = 12.dp)) {
                             Text("Tri et filtres", color = Color.White, fontWeight = FontWeight.Bold)
                             Text(sortMode.label, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
@@ -140,7 +161,7 @@ private fun CatalogPriceScreen(
                         Icon(
                             if (filtersExpanded) Icons.Filled.ExpandLess else Icons.Filled.ExpandMore,
                             null,
-                            tint = com.runeprofittouch.app.ui.theme.BrightGold
+                            tint = BrightGold
                         )
                     }
                 }
@@ -228,18 +249,20 @@ private fun CatalogPriceCard(
         null -> MaterialTheme.colorScheme.primary
     }
 
-    LuxuryCard(modifier = Modifier.fillMaxWidth(), accent = accent) {
+    LuxuryCard(modifier = Modifier.fillMaxWidth(), accent = AntiqueGold, corner = 16.dp) {
         Box(
             Modifier
-                .matchParentSize()
+                .width(6.dp)
+                .fillMaxHeight()
+                .align(Alignment.CenterStart)
                 .background(
                     Brush.horizontalGradient(
-                        listOf(accent.copy(alpha = 0.13f), Color.Transparent, Color.Transparent)
+                        listOf(accent, accent.copy(alpha = 0.35f))
                     )
                 )
         )
         Column(
-            modifier = Modifier.padding(18.dp),
+            modifier = Modifier.padding(start = 22.dp, top = 18.dp, end = 18.dp, bottom = 18.dp),
             verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
