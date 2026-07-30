@@ -54,9 +54,9 @@ fun LuxuryBackground(modifier: Modifier = Modifier, content: @Composable BoxScop
                 .background(
                     Brush.verticalGradient(
                         listOf(
-                            Color.Black.copy(alpha = 0.18f),
-                            Color(0xFF071018).copy(alpha = 0.34f),
-                            Color.Black.copy(alpha = 0.24f)
+                            Color.Black.copy(alpha = 0.34f),
+                            Color(0xFF090A0B).copy(alpha = 0.48f),
+                            Color.Black.copy(alpha = 0.42f)
                         )
                     )
                 )
@@ -105,7 +105,7 @@ fun LuxuryCard(
             .clip(shape)
             .background(
                 Brush.linearGradient(
-                    listOf(Color(0xFF242933), Color(0xFF14171D), Color(0xFF1B1F27))
+                    listOf(Color(0xFF1C1A16), Color(0xFF0A0B0E), Color(0xFF111215))
                 )
             )
             .border(
