@@ -106,22 +106,12 @@ private fun CatalogPriceScreen(
         Column(
             Modifier
                 .fillMaxSize()
-                .padding(horizontal = 10.dp, vertical = 7.dp)
-                .drawBehind {
-                    drawRoundRect(
-                        color = Color.Black.copy(alpha = 0.42f),
-                        topLeft = Offset(5.dp.toPx(), 9.dp.toPx()),
-                        size = androidx.compose.ui.geometry.Size(size.width - 10.dp.toPx(), size.height - 12.dp.toPx()),
-                        cornerRadius = androidx.compose.ui.geometry.CornerRadius(18.dp.toPx())
-                    )
-                }
-                .background(Color(0x9C090A0D), RoundedCornerShape(18.dp))
+                .padding(horizontal = 14.dp)
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Brush.verticalGradient(listOf(Color(0xFF17130C), Color.Transparent)))
-                    .padding(horizontal = 14.dp, vertical = 12.dp),
+                    .padding(top = 6.dp, bottom = 12.dp),
                 verticalArrangement = Arrangement.spacedBy(14.dp)
             ) {
                 FantasyScreenHeader(

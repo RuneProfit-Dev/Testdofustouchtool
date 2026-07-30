@@ -84,8 +84,8 @@ fun AppNavigation() {
     val priceViewModel: PriceViewModel = viewModel(key = "shared-price")
     val navigationItems = listOf(
         NavigationItem("search", "Recherche", Icons.Filled.Search),
-        NavigationItem("resources", "Ressources", Icons.Filled.Inventory2),
-        NavigationItem("runes", "Runes", Icons.Filled.Diamond),
+        NavigationItem("resources", "Ressource", Icons.Filled.Inventory2),
+        NavigationItem("runes", "Rune", Icons.Filled.Diamond),
         NavigationItem("settings", "Plus", Icons.Filled.MoreHoriz)
     )
 
