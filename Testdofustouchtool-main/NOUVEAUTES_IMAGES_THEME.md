@@ -1,0 +1,22 @@
+# Images et personnalisation
+
+- Priorité conservée aux images officielles Dofus Touch.
+- Récupération de 191 images manquantes depuis le catalogue de ressources Dofus PC.
+- Aucune recette, statistique ou donnée d'équipement Dofus PC importée.
+- Ajout de Paramètres avec les sous-onglets Serveur et Personnaliser.
+- Huit couleurs de thème prédéfinies et saisie libre d'une couleur hexadécimale.
+- Application immédiate de la couleur choisie et sauvegarde automatique.
+- Nouvelle importation des images sans supprimer les prix, analyses ou favoris.
+- Ajout d'un thème sombre activable dans Paramètres > Personnaliser.
+- Sauvegarde automatique du choix clair ou sombre.
+- Application de la couleur choisie aux contours, boutons et sélections.
+- Teinte assortie appliquée aux cartes et aux fonds secondaires.
+- Ajout du tri des prix dans Ressources et Runes.
+- Tri par défaut : jamais renseigné, rouge, jaune, puis vert.
+- Autres tris disponibles : nom, ancienneté, récence et prix.
+- Ajout d'un filtre multi-runes dans Recherche et Favoris.
+- Ga PA, Ga PM et PO sont placées en tête du sélecteur de runes.
+- Plusieurs runes cochées exigent que l'objet offre chacune d'elles.
+- Correction automatique des noms mal décodés dans la base embarquée.
+- Récupération des images présentes dans les ingrédients des recettes.
+- Extension de la recherche d'images aux catalogues de consommables Touch et PC.

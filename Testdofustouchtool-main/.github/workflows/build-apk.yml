@@ -1,0 +1,33 @@
+name: Compiler RuneProfit Touch
+
+on:
+  push:
+    branches: ["master", "main"]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Récupérer le projet
+        uses: actions/checkout@v4
+
+      - name: Installer Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: gradle
+
+      - name: Autoriser Gradle
+        run: chmod +x gradlew
+
+      - name: Compiler l’APK
+        run: ./gradlew assembleDebug
+
+      - name: Publier l’APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: RuneProfitTouch-debug-apk
+          path: app/build/outputs/apk/debug/app-debug.apk
