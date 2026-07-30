@@ -40,6 +40,7 @@ import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material.icons.outlined.StarBorder
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -150,6 +151,7 @@ fun PriceScreen(
     val resourceDrafts by priceViewModel.resourcePriceDrafts.collectAsState()
     val manualCraftCost by priceViewModel.manualCraftCostText.collectAsState()
     val coefficient by priceViewModel.crushingCoefficientText.collectAsState()
+    val isFiltering by priceViewModel.isFiltering.collectAsState()
 
     var sortMenuExpanded by remember { mutableStateOf(false) }
     var runeFilterDialogVisible by remember { mutableStateOf(false) }
@@ -288,6 +290,25 @@ fun PriceScreen(
                             onToggleFavorite = { priceViewModel.toggleFavorite(item.id) },
                             onClick = { priceViewModel.selectItem(item) }
                         )
+                    }
+                }
+            }
+        }
+        if (isFiltering) {
+            Box(
+                Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.34f)),
+                contentAlignment = Alignment.Center
+            ) {
+                GoldPanel(accent = Emerald) {
+                    Column(
+                        Modifier.padding(horizontal = 28.dp, vertical = 20.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        CircularProgressIndicator(color = BrightGold, trackColor = AntiqueGold.copy(alpha = .25f))
+                        Spacer(Modifier.height(12.dp))
+                        Text("MISE À JOUR…", color = BrightGold, fontWeight = FontWeight.Bold)
                     }
                 }
             }

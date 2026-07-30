@@ -21,7 +21,7 @@ import kotlinx.coroutines.withContext
 class MainActivity : ComponentActivity() {
 
     companion object {
-        private const val DATA_VERSION = 7
+        private const val DATA_VERSION = 8
         private const val DATA_PREFERENCES = "game_data"
     }
 

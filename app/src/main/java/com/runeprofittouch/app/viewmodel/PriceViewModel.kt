@@ -54,6 +54,8 @@ class PriceViewModel(application: Application) : AndroidViewModel(application) {
     val selectedRuneFilters = MutableStateFlow<Set<String>>(emptySet())
     val runeFilterOptions = RuneEstimator.availableRuneNames()
     val sortMode = MutableStateFlow(ItemSortMode.PROFIT_DESCENDING)
+    val isFiltering = MutableStateFlow(false)
+    private var filteringJob: Job? = null
     private val selectedItemId = MutableStateFlow<Int?>(null)
     val selectedItem = MutableStateFlow<ItemEntity?>(null)
 
@@ -274,11 +276,22 @@ class PriceViewModel(application: Application) : AndroidViewModel(application) {
             initialValue = null
         )
 
+    private fun showFilteringIndicator() {
+        filteringJob?.cancel()
+        isFiltering.value = true
+        filteringJob = viewModelScope.launch {
+            delay(220L)
+            isFiltering.value = false
+        }
+    }
+
     fun updateSearchText(value: String) {
         searchText.value = value
+        showFilteringIndicator()
     }
 
     fun toggleProfession(value: String) {
+        showFilteringIndicator()
         selectedProfessions.value =
             if (value in selectedProfessions.value) {
                 selectedProfessions.value - value
@@ -288,14 +301,17 @@ class PriceViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun clearProfessions() {
+        showFilteringIndicator()
         selectedProfessions.value = emptySet()
     }
 
     fun updateSortMode(value: ItemSortMode) {
+        showFilteringIndicator()
         sortMode.value = value
     }
 
     fun toggleRecipeSlot(slotCount: Int) {
+        showFilteringIndicator()
         selectedRecipeSlots.value =
             if (slotCount in selectedRecipeSlots.value) {
                 selectedRecipeSlots.value - slotCount
@@ -305,6 +321,7 @@ class PriceViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun toggleRuneFilter(runeName: String) {
+        showFilteringIndicator()
         selectedRuneFilters.value =
             if (runeName in selectedRuneFilters.value) {
                 selectedRuneFilters.value - runeName
@@ -314,6 +331,7 @@ class PriceViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun clearRuneFilters() {
+        showFilteringIndicator()
         selectedRuneFilters.value = emptySet()
     }
 
