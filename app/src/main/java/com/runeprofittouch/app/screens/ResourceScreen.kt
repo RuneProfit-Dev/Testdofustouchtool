@@ -49,6 +49,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.draw.drawBehind
+import com.runeprofittouch.app.R
 import com.runeprofittouch.app.data.ServerStore
 import com.runeprofittouch.app.database.PriceEntity
 import com.runeprofittouch.app.database.ResourceEntity
@@ -62,6 +63,7 @@ import com.runeprofittouch.app.ui.theme.Ember
 import com.runeprofittouch.app.ui.theme.Emerald
 import com.runeprofittouch.app.ui.theme.LuxuryBackground
 import com.runeprofittouch.app.ui.theme.LuxuryCard
+import com.runeprofittouch.app.ui.theme.FantasyScreenHeader
 import com.runeprofittouch.app.viewmodel.CatalogPriceSort
 import com.runeprofittouch.app.viewmodel.ResourceViewModel
 import java.text.NumberFormat
@@ -69,7 +71,7 @@ import java.util.Locale
 
 @Composable
 fun ResourceScreen(viewModel: ResourceViewModel) = CatalogPriceScreen(
-    title = "Ressources",
+    titleDrawable = R.drawable.title_ressources,
     searchPlaceholder = "Rechercher une ressource…",
     emptyMessage = "Aucune ressource trouvée.",
     viewModel = viewModel
@@ -77,7 +79,7 @@ fun ResourceScreen(viewModel: ResourceViewModel) = CatalogPriceScreen(
 
 @Composable
 fun RuneScreen(viewModel: ResourceViewModel) = CatalogPriceScreen(
-    title = "Runes",
+    titleDrawable = R.drawable.title_rune,
     searchPlaceholder = "Rechercher une rune…",
     emptyMessage = "Aucune rune trouvée.",
     viewModel = viewModel
@@ -86,7 +88,7 @@ fun RuneScreen(viewModel: ResourceViewModel) = CatalogPriceScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CatalogPriceScreen(
-    title: String,
+    titleDrawable: Int,
     searchPlaceholder: String,
     emptyMessage: String,
     viewModel: ResourceViewModel
@@ -122,16 +124,9 @@ private fun CatalogPriceScreen(
                     .padding(horizontal = 14.dp, vertical = 12.dp),
                 verticalArrangement = Arrangement.spacedBy(14.dp)
             ) {
-                Text(
-                    text = title.uppercase(),
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Black,
-                    color = BrightGold
-                )
-                Text(
-                    text = server,
-                    color = Ivory.copy(alpha = 0.72f),
-                    style = MaterialTheme.typography.bodySmall
+                FantasyScreenHeader(
+                    titleDrawable = titleDrawable,
+                    serverName = server
                 )
                 OutlinedTextField(
                     value = searchText,

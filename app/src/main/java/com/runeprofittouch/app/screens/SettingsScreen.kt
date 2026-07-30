@@ -37,25 +37,26 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.runeprofittouch.app.R
 import com.runeprofittouch.app.data.ServerStore
 import com.runeprofittouch.app.data.ThemeStore
 import com.runeprofittouch.app.ui.theme.LuxuryBackground
 import com.runeprofittouch.app.ui.theme.LuxuryCard
+import com.runeprofittouch.app.ui.theme.FantasyScreenHeader
 import com.runeprofittouch.app.ui.theme.AntiqueGold
 import com.runeprofittouch.app.ui.theme.BrightGold
 
 @Composable
 fun SettingsScreen() {
     var selectedTab by remember { mutableStateOf(0) }
+    val selectedServer by ServerStore.selectedServer.collectAsState()
 
     LuxuryBackground(Modifier.fillMaxSize()) {
     Column(modifier = Modifier.fillMaxSize()) {
-        Text(
-            text = "Paramètres",
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold,
-            color = Color.White,
-            modifier = Modifier.padding(16.dp)
+        FantasyScreenHeader(
+            titleDrawable = R.drawable.title_parametres,
+            serverName = selectedServer,
+            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
         )
         TabRow(selectedTabIndex = selectedTab, containerColor = MaterialTheme.colorScheme.surface, contentColor = BrightGold) {
             Tab(
