@@ -53,7 +53,7 @@ class PriceViewModel(application: Application) : AndroidViewModel(application) {
     val selectedRecipeSlots = MutableStateFlow((2..8).toSet())
     val selectedRuneFilters = MutableStateFlow<Set<String>>(emptySet())
     val runeFilterOptions = RuneEstimator.availableRuneNames()
-    val sortMode = MutableStateFlow(ItemSortMode.NAME)
+    val sortMode = MutableStateFlow(ItemSortMode.PROFIT_DESCENDING)
     private val selectedItemId = MutableStateFlow<Int?>(null)
     val selectedItem = MutableStateFlow<ItemEntity?>(null)
 
@@ -222,12 +222,32 @@ class PriceViewModel(application: Application) : AndroidViewModel(application) {
     val sortedItems = combine(
         filteredItems,
         sortMode,
-        profitByItemId
-    ) { items, selectedSort, profits ->
+        profitByItemId,
+        repository.recipeSlotCounts,
+        favoriteIds
+    ) { items, selectedSort, profits, recipeSlotCounts, favorites ->
+        val ingredientCountByItemId = recipeSlotCounts.associate { it.itemId to it.slotCount }
         when (selectedSort) {
-            ItemSortMode.NAME -> items.sortedBy { normalizeForSearch(it.name) }
             ItemSortMode.PROFIT_DESCENDING -> items.sortedWith(
                 compareByDescending<ItemEntity> { profits[it.id] ?: Long.MIN_VALUE }
+                    .thenBy { normalizeForSearch(it.name) }
+            )
+            ItemSortMode.NAME -> items.sortedBy { normalizeForSearch(it.name) }
+            ItemSortMode.INGREDIENT_COUNT_ASCENDING -> items.sortedWith(
+                compareBy<ItemEntity> { ingredientCountByItemId[it.id] ?: Int.MAX_VALUE }
+                    .thenBy { normalizeForSearch(it.name) }
+            )
+            ItemSortMode.FAVORITES_FIRST -> items.sortedWith(
+                compareByDescending<ItemEntity> { it.id in favorites }
+                    .thenByDescending { profits[it.id] ?: Long.MIN_VALUE }
+                    .thenBy { normalizeForSearch(it.name) }
+            )
+            ItemSortMode.LEVEL_ASCENDING -> items.sortedWith(
+                compareBy<ItemEntity> { it.itemLevel }
+                    .thenBy { normalizeForSearch(it.name) }
+            )
+            ItemSortMode.LEVEL_DESCENDING -> items.sortedWith(
+                compareByDescending<ItemEntity> { it.itemLevel }
                     .thenBy { normalizeForSearch(it.name) }
             )
         }
@@ -401,8 +421,12 @@ class PriceViewModel(application: Application) : AndroidViewModel(application) {
 }
 
 enum class ItemSortMode(val label: String) {
+    PROFIT_DESCENDING("Rentable (par profit)"),
     NAME("Nom A–Z"),
-    PROFIT_DESCENDING("Profit ++ en premier")
+    INGREDIENT_COUNT_ASCENDING("Nombre d’ingrédients (croissant)"),
+    FAVORITES_FIRST("Favoris"),
+    LEVEL_ASCENDING("Niveau croissant"),
+    LEVEL_DESCENDING("Niveau décroissant")
 }
 
 private data class ProfitabilityInputs(

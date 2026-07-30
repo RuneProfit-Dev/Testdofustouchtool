@@ -618,7 +618,8 @@ private fun ProfitabilityDialog(
     FantasyDialog(
         title = item.name.uppercase(),
         onDismiss = onClose,
-        footer = { FantasyTextButton("FERMER", onClose) }
+        showBackButton = true,
+        onBack = onClose
     ) {
         Column(
             modifier = Modifier.verticalScroll(rememberScrollState()),
@@ -910,6 +911,8 @@ private fun FantasyDialog(
     title: String,
     onDismiss: () -> Unit,
     footer: (@Composable RowScope.() -> Unit)? = null,
+    showBackButton: Boolean = false,
+    onBack: (() -> Unit)? = null,
     content: @Composable () -> Unit
 ) {
     Dialog(
@@ -929,14 +932,35 @@ private fun FantasyDialog(
                     .border(1.dp, AntiqueGold.copy(alpha = .5f), RoundedCornerShape(13.dp))
                     .padding(16.dp)
             ) {
-                Text(
-                    title,
-                    color = BrightGold,
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Black,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth()
-                )
+                Box(Modifier.fillMaxWidth()) {
+                    if (showBackButton && onBack != null) {
+                        Text(
+                            "‹  RETOUR",
+                            color = BrightGold,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier
+                                .align(Alignment.CenterStart)
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(Color(0xFF18150F))
+                                .border(1.dp, BrightGold, RoundedCornerShape(8.dp))
+                                .clickable(onClick = onBack)
+                                .padding(horizontal = 11.dp, vertical = 7.dp)
+                        )
+                    }
+                    Text(
+                        title,
+                        color = BrightGold,
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Black,
+                        textAlign = TextAlign.Center,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = if (showBackButton) 82.dp else 0.dp)
+                            .align(Alignment.Center)
+                    )
+                }
                 Box(
                     Modifier.fillMaxWidth().padding(vertical = 10.dp).height(1.dp)
                         .background(Brush.horizontalGradient(listOf(Color.Transparent, BrightGold, Color.Transparent)))
