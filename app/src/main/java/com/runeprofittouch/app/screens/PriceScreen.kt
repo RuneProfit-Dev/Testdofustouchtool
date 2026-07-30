@@ -104,19 +104,19 @@ private data class ProfessionVisual(val name: String, val drawable: Int)
 
 private val professionVisuals = listOf(
     ProfessionVisual("Bijoutier", R.drawable.profession_bijoutier),
-    ProfessionVisual("Cordonnier", R.drawable.profession_cordonnier),
+    ProfessionVisual("Forgeur de boucliers", R.drawable.profession_forgeur_boucliers),
+    ProfessionVisual("Alchimiste", R.drawable.profession_alchimiste),
+    ProfessionVisual("Bricoleur", R.drawable.profession_bricoleur),
     ProfessionVisual("Tailleur", R.drawable.profession_tailleur),
-    ProfessionVisual("Forgeur d'épées", R.drawable.profession_forgeur_epees),
     ProfessionVisual("Forgeur de dagues", R.drawable.profession_forgeur_dagues),
+    ProfessionVisual("Forgeur d'épées", R.drawable.profession_forgeur_epees),
     ProfessionVisual("Forgeur de haches", R.drawable.profession_forgeur_haches),
     ProfessionVisual("Forgeur de marteaux", R.drawable.profession_forgeur_marteaux),
     ProfessionVisual("Forgeur de pelles", R.drawable.profession_forgeur_pelles),
-    ProfessionVisual("Forgeur de boucliers", R.drawable.profession_forgeur_boucliers),
     ProfessionVisual("Sculpteur d'arcs", R.drawable.profession_sculpteur_arcs),
     ProfessionVisual("Sculpteur de bâtons", R.drawable.profession_sculpteur_batons),
     ProfessionVisual("Sculpteur de baguettes", R.drawable.profession_sculpteur_baguettes),
-    ProfessionVisual("Alchimiste", R.drawable.profession_alchimiste),
-    ProfessionVisual("Bricoleur", R.drawable.profession_bricoleur)
+    ProfessionVisual("Cordonnier", R.drawable.profession_cordonnier)
 )
 
 private val FreshGreen = Color(0xFF2E7D32)
@@ -457,51 +457,91 @@ private fun GoldSectionTitle(title: String, action: String? = null, onAction: ((
 
 @Composable
 private fun ProfessionTile(profession: ProfessionVisual, selected: Boolean, onClick: () -> Unit) {
-    val glow = if (selected) Emerald else BrightGold
-    val shape = RoundedCornerShape(14.dp)
+    val selection = if (selected) Emerald else Color.Transparent
+    val outerShape = RoundedCornerShape(10.dp)
+
     Box(
         Modifier
-            .size(width = 136.dp, height = 160.dp)
-            .clip(shape)
-            .background(Color(0xD80A0B0D))
-            .border(if (selected) 2.dp else 1.dp, glow, shape)
+            .size(width = 112.dp, height = 178.dp)
+            .background(Color(0xE6080909), outerShape)
+            .border(if (selected) 2.dp else 1.dp, if (selected) Emerald else AntiqueGold.copy(alpha = .62f), outerShape)
             .clickable(onClick = onClick)
             .drawBehind {
-                if (selected) drawCircle(Emerald.copy(alpha = .16f), radius = size.minDimension * .72f, center = center)
+                drawRoundRect(
+                    brush = Brush.verticalGradient(
+                        listOf(Color.White.copy(alpha = .045f), Color.Transparent, Color.Black.copy(alpha = .45f))
+                    ),
+                    cornerRadius = androidx.compose.ui.geometry.CornerRadius(10.dp.toPx())
+                )
+                if (selected) {
+                    drawCircle(selection.copy(alpha = .17f), radius = size.minDimension * .82f, center = Offset(size.width / 2f, size.height * .38f))
+                }
             }
     ) {
-        Column(Modifier.fillMaxSize().padding(horizontal = 6.dp, vertical = 6.dp)) {
-            Image(
-                painter = painterResource(profession.drawable),
-                contentDescription = profession.name,
-                contentScale = ContentScale.FillWidth,
+        Column(Modifier.fillMaxSize()) {
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(106.dp)
-                    .clip(RoundedCornerShape(10.dp))
-            )
+                    .height(128.dp)
+                    .background(
+                        Brush.verticalGradient(
+                            listOf(Color(0xFF07140C), Color(0xFF041008), Color(0xFF080909))
+                        ),
+                        RoundedCornerShape(topStart = 9.dp, topEnd = 9.dp)
+                    )
+                    .padding(2.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Image(
+                    painter = painterResource(profession.drawable),
+                    contentDescription = profession.name,
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
+
             Box(
-                Modifier.fillMaxWidth().weight(1f),
+                Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .background(
+                        Brush.verticalGradient(listOf(Color(0xFF1B160D), Color(0xFF090A09)))
+                    )
+                    .border(
+                        width = 1.dp,
+                        brush = Brush.horizontalGradient(listOf(Color.Transparent, AntiqueGold, Color.Transparent)),
+                        shape = RoundedCornerShape(bottomStart = 9.dp, bottomEnd = 9.dp)
+                    ),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
                     profession.name,
-                    color = Color.White,
-                    fontSize = 11.5.sp,
-                    lineHeight = 13.sp,
-                    fontWeight = FontWeight.Bold,
-                    maxLines = 2,
+                    color = Ivory,
+                    fontSize = 11.sp,
+                    lineHeight = 12.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    maxLines = 3,
                     overflow = TextOverflow.Ellipsis,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(horizontal = 4.dp)
+                    modifier = Modifier.padding(horizontal = 5.dp, vertical = 3.dp)
                 )
             }
         }
-        if (selected) {
-            Box(
-                Modifier.align(Alignment.TopEnd).padding(7.dp).size(21.dp).background(Emerald, CircleShape),
-                contentAlignment = Alignment.Center
-            ) { Icon(Icons.Filled.Check, null, tint = Color.Black, modifier = Modifier.size(14.dp)) }
+
+        Box(
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .padding(top = 2.dp)
+                .size(if (selected) 12.dp else 9.dp)
+                .clip(RoundedCornerShape(2.dp))
+                .background(if (selected) Emerald else AntiqueGold)
+                .border(1.dp, BrightGold, RoundedCornerShape(2.dp))
+                .drawBehind { },
+            contentAlignment = Alignment.Center
+        ) {
+            if (selected) {
+                Box(Modifier.size(5.dp).background(Color(0xFFB5FFC0), RoundedCornerShape(1.dp)))
+            }
         }
     }
 }

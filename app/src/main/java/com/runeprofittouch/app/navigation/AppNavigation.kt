@@ -1,8 +1,9 @@
 package com.runeprofittouch.app.navigation
 
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -16,10 +17,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Diamond
 import androidx.compose.material.icons.filled.Inventory2
@@ -35,13 +36,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.NavHost
@@ -151,129 +157,319 @@ private fun GameBottomBar(
     selectedRoute: String?,
     onSelected: (NavigationItem) -> Unit
 ) {
-    val outerShape = RoundedCornerShape(22.dp)
+    val frameShape = CutCornerShape(topStart = 15.dp, topEnd = 15.dp, bottomStart = 15.dp, bottomEnd = 15.dp)
+    val innerShape = CutCornerShape(topStart = 11.dp, topEnd = 11.dp, bottomStart = 11.dp, bottomEnd = 11.dp)
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
+            .height(106.dp)
             .background(Color.Transparent)
-            .padding(horizontal = 10.dp, vertical = 7.dp)
+            .padding(horizontal = 7.dp, vertical = 3.dp)
     ) {
-        Column(
+        // Ombre massive + cadre extérieur en or vieilli.
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(90.dp)
-                .graphicsLayer {
-                    shadowElevation = 18.dp.toPx()
-                    shape = outerShape
-                    clip = false
-                    ambientShadowColor = Color.Black.copy(alpha = 0.75f)
-                    spotShadowColor = Color.Black
-                }
+                .height(96.dp)
+                .align(Alignment.TopCenter)
+                .shadow(18.dp, frameShape, clip = false)
                 .background(
                     Brush.verticalGradient(
-                        listOf(Color(0xFF15110C), Color(0xFF090A0B), Color(0xFF141110))
+                        listOf(
+                            Color(0xFF6C4A17),
+                            Color(0xFFE2B64D),
+                            Color(0xFF8A5A18),
+                            Color(0xFF3B260C)
+                        )
                     ),
-                    outerShape
+                    frameShape
                 )
                 .border(
-                    BorderStroke(
+                    1.dp,
+                    Brush.verticalGradient(
+                        listOf(Color(0xFFFFE9A6), Color(0xFFB67B20), Color(0xFF5A350D))
+                    ),
+                    frameShape
+                )
+                .padding(3.dp)
+        ) {
+            // Deuxième contour sculpté.
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(90.dp)
+                    .background(Color(0xFF120E09), innerShape)
+                    .border(
                         2.dp,
                         Brush.verticalGradient(
-                            listOf(Color(0xFFF3D37A), BrightGold, AntiqueGold)
-                        )
-                    ),
-                    outerShape
-                )
-                .padding(horizontal = 6.dp, vertical = 6.dp)
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth().weight(1f),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                items.forEachIndexed { index, item ->
-                    val selected = selectedRoute == item.route
-                    val scale by animateFloatAsState(
-                        targetValue = if (selected) 1.015f else 1f,
-                        animationSpec = spring(stiffness = 460f),
-                        label = "navScale"
+                            listOf(Color(0xFF4B2E0B), BrightGold, AntiqueGold, Color(0xFF3A230A))
+                        ),
+                        innerShape
                     )
-                    Column(
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(68.dp)
-                            .scale(scale)
-                            .background(
-                                if (selected) {
-                                    Brush.verticalGradient(
-                                        listOf(Color(0xFF235A21), Color(0xFF123B15), Color(0xFF081D0B))
-                                    )
-                                } else {
-                                    Brush.verticalGradient(
-                                        listOf(Color.Transparent, Color.Transparent)
-                                    )
-                                },
-                                RoundedCornerShape(16.dp)
-                            )
-                            .then(
-                                if (selected) Modifier.border(
-                                    1.8.dp,
-                                    Brush.verticalGradient(listOf(Color(0xFFFFE8A2), AntiqueGold, BrightGold)),
-                                    RoundedCornerShape(16.dp)
-                                ) else Modifier
-                            )
-                            .clickable(
-                                interactionSource = remember { MutableInteractionSource() },
-                                indication = null
-                            ) { onSelected(item) },
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        Icon(
-                            imageVector = item.icon,
-                            contentDescription = item.label,
-                            tint = if (selected) Color(0xFFFFE7A0) else AntiqueGold.copy(alpha = .94f),
-                            modifier = Modifier.size(if (selected) 30.dp else 26.dp)
-                        )
-                        Text(
-                            text = item.label,
-                            color = if (selected) Color.White else Ivory.copy(alpha = .90f),
-                            style = MaterialTheme.typography.labelMedium,
-                            fontWeight = if (selected) FontWeight.Bold else FontWeight.SemiBold,
-                            maxLines = 1
-                        )
-                    }
-                    if (index < items.lastIndex) {
-                        Box(
-                            Modifier
-                                .height(56.dp)
-                                .size(width = 1.dp, height = 56.dp)
-                                .background(
-                                    Brush.verticalGradient(
-                                        listOf(Color.Transparent, AntiqueGold.copy(alpha = .42f), Color.Transparent)
-                                    )
+                    .padding(3.dp)
+            ) {
+                // Pierre noire continue avec reflet métallique et ombre intérieure simulée.
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(80.dp)
+                        .background(
+                            Brush.verticalGradient(
+                                listOf(
+                                    Color(0xFF28251F),
+                                    Color(0xFF121311),
+                                    Color(0xFF080A09),
+                                    Color(0xFF19150F)
                                 )
+                            ),
+                            CutCornerShape(8.dp)
                         )
+                        .border(
+                            1.dp,
+                            Brush.verticalGradient(
+                                listOf(Color.Black.copy(alpha = .9f), Color(0xFF5C513A), Color.Black)
+                            ),
+                            CutCornerShape(8.dp)
+                        )
+                        .padding(horizontal = 4.dp, vertical = 5.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    items.forEachIndexed { index, item ->
+                        val selected = selectedRoute == item.route
+                        val scale by animateFloatAsState(
+                            targetValue = if (selected) 1.07f else 1f,
+                            animationSpec = tween(durationMillis = 180),
+                            label = "fantasyNavScale"
+                        )
+                        val lift by animateFloatAsState(
+                            targetValue = if (selected) -3f else 0f,
+                            animationSpec = tween(durationMillis = 180),
+                            label = "fantasyNavLift"
+                        )
+                        val glow by animateFloatAsState(
+                            targetValue = if (selected) 1f else 0f,
+                            animationSpec = tween(durationMillis = 180),
+                            label = "fantasyNavGlow"
+                        )
+
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(70.dp)
+                                .offset(y = lift.dp)
+                                .scale(scale)
+                                .then(
+                                    if (selected) {
+                                        Modifier
+                                            .shadow(
+                                                elevation = (8f * glow).dp,
+                                                shape = CutCornerShape(9.dp),
+                                                clip = false,
+                                                ambientColor = Emerald.copy(alpha = .8f * glow),
+                                                spotColor = Emerald.copy(alpha = .9f * glow)
+                                            )
+                                            .background(
+                                                Brush.verticalGradient(
+                                                    listOf(
+                                                        Color(0xFF347138),
+                                                        Color(0xFF16451F),
+                                                        Color(0xFF09250F)
+                                                    )
+                                                ),
+                                                CutCornerShape(9.dp)
+                                            )
+                                            .border(
+                                                2.dp,
+                                                Brush.verticalGradient(
+                                                    listOf(
+                                                        Color(0xFFFFE7A0),
+                                                        Color(0xFFD59B32),
+                                                        Color(0xFF70420E)
+                                                    )
+                                                ),
+                                                CutCornerShape(9.dp)
+                                            )
+                                    } else Modifier
+                                )
+                                .clickable(
+                                    interactionSource = remember { MutableInteractionSource() },
+                                    indication = null
+                                ) { onSelected(item) },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            if (selected) {
+                                Box(
+                                    modifier = Modifier
+                                        .align(Alignment.TopCenter)
+                                        .fillMaxWidth(.72f)
+                                        .height(2.dp)
+                                        .background(
+                                            Brush.horizontalGradient(
+                                                listOf(Color.Transparent, Color(0xFFB6FFB8), Color.Transparent)
+                                            )
+                                        )
+                                )
+                            }
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                Icon(
+                                    imageVector = item.icon,
+                                    contentDescription = item.label,
+                                    tint = if (selected) Color(0xFFFFE9A8) else Color(0xFFD4AE62),
+                                    modifier = Modifier.size(if (selected) 31.dp else 28.dp)
+                                )
+                                Text(
+                                    text = item.label,
+                                    color = if (selected) Color(0xFFFFF3CF) else Ivory.copy(alpha = .88f),
+                                    fontSize = 11.sp,
+                                    lineHeight = 12.sp,
+                                    fontWeight = if (selected) FontWeight.ExtraBold else FontWeight.SemiBold,
+                                    maxLines = 1
+                                )
+                            }
+                        }
+
+                        if (index < items.lastIndex) {
+                            FantasyDivider(
+                                emphasized = index == 1,
+                                modifier = Modifier.height(58.dp)
+                            )
+                        }
                     }
                 }
             }
         }
-        Box(
-            Modifier
+
+        // Émeraude centrale sertie, intégrée au cadre entre Ressources et Runes.
+        EmeraldNavGem(
+            modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .offset(y = 8.dp)
-                .size(24.dp)
-                .background(Color(0xFF1A160F), RoundedCornerShape(6.dp))
-                .border(1.8.dp, BrightGold, RoundedCornerShape(6.dp))
-                .graphicsLayer { rotationZ = 45f },
-            contentAlignment = Alignment.Center
-        ) {
-            Box(
-                Modifier
-                    .size(12.dp)
-                    .background(Emerald, RoundedCornerShape(3.dp))
-                    .border(1.dp, Color(0xFFA1FFB0), RoundedCornerShape(3.dp))
+                .offset(y = 1.dp)
+                .size(44.dp)
+        )
+
+        // Rivets/coins décoratifs du cadre.
+        FrameCornerOrnament(Modifier.align(Alignment.BottomStart).offset(x = 3.dp, y = (-4).dp))
+        FrameCornerOrnament(Modifier.align(Alignment.BottomEnd).offset(x = (-3).dp, y = (-4).dp))
+    }
+}
+
+@Composable
+private fun FantasyDivider(
+    emphasized: Boolean,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier.width(if (emphasized) 14.dp else 8.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Canvas(modifier = Modifier.fillMaxWidth().height(54.dp)) {
+            val centerX = size.width / 2f
+            drawLine(
+                brush = Brush.verticalGradient(
+                    listOf(Color.Transparent, Color(0xFFF0C564), Color(0xFF765018), Color.Transparent)
+                ),
+                start = androidx.compose.ui.geometry.Offset(centerX, 3f),
+                end = androidx.compose.ui.geometry.Offset(centerX, size.height - 3f),
+                strokeWidth = if (emphasized) 2.4.dp.toPx() else 1.3.dp.toPx(),
+                cap = StrokeCap.Round
+            )
+            drawCircle(
+                color = Color(0xFFDCA94B),
+                radius = if (emphasized) 3.2.dp.toPx() else 2.2.dp.toPx(),
+                center = center
+            )
+            drawCircle(
+                color = Color(0xFF241507),
+                radius = if (emphasized) 1.3.dp.toPx() else .8.dp.toPx(),
+                center = center
             )
         }
+    }
+}
+
+@Composable
+private fun EmeraldNavGem(modifier: Modifier = Modifier) {
+    Canvas(
+        modifier = modifier
+            .shadow(12.dp, RoundedCornerShape(15.dp), clip = false)
+    ) {
+        val w = size.width
+        val h = size.height
+        val outer = Path().apply {
+            moveTo(w * .50f, 0f)
+            lineTo(w * .88f, h * .22f)
+            lineTo(w, h * .58f)
+            lineTo(w * .72f, h)
+            lineTo(w * .28f, h)
+            lineTo(0f, h * .58f)
+            lineTo(w * .12f, h * .22f)
+            close()
+        }
+        drawPath(
+            path = outer,
+            brush = Brush.verticalGradient(
+                listOf(Color(0xFFFFE8A0), Color(0xFFB67A1E), Color(0xFF51300A))
+            )
+        )
+        drawPath(path = outer, color = Color(0xFFFFF1B6), style = Stroke(width = 1.2.dp.toPx()))
+
+        val gem = Path().apply {
+            moveTo(w * .50f, h * .12f)
+            lineTo(w * .78f, h * .29f)
+            lineTo(w * .87f, h * .57f)
+            lineTo(w * .66f, h * .87f)
+            lineTo(w * .34f, h * .87f)
+            lineTo(w * .13f, h * .57f)
+            lineTo(w * .22f, h * .29f)
+            close()
+        }
+        drawPath(
+            path = gem,
+            brush = Brush.linearGradient(
+                listOf(Color(0xFF8CFF9C), Color(0xFF17873B), Color(0xFF063B1B), Color(0xFF0A2213))
+            )
+        )
+        drawPath(path = gem, color = Color(0xFFB4FFC1), style = Stroke(width = 1.dp.toPx()))
+
+        drawLine(
+            color = Color.White.copy(alpha = .55f),
+            start = androidx.compose.ui.geometry.Offset(w * .30f, h * .31f),
+            end = androidx.compose.ui.geometry.Offset(w * .52f, h * .20f),
+            strokeWidth = 2.dp.toPx(),
+            cap = StrokeCap.Round
+        )
+        drawLine(
+            color = Color(0xFF063117),
+            start = androidx.compose.ui.geometry.Offset(w * .50f, h * .13f),
+            end = androidx.compose.ui.geometry.Offset(w * .50f, h * .85f),
+            strokeWidth = .8.dp.toPx()
+        )
+    }
+}
+
+@Composable
+private fun FrameCornerOrnament(modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier
+            .size(17.dp)
+            .graphicsLayer { rotationZ = 45f }
+            .background(
+                Brush.linearGradient(listOf(Color(0xFFFFD875), Color(0xFF875815), Color(0xFF3F2508))),
+                RoundedCornerShape(4.dp)
+            )
+            .border(1.dp, Color(0xFFFFE9A0), RoundedCornerShape(4.dp)),
+        contentAlignment = Alignment.Center
+    ) {
+        Box(
+            modifier = Modifier
+                .size(6.dp)
+                .background(Color(0xFF201508), RoundedCornerShape(2.dp))
+                .border(.7.dp, AntiqueGold, RoundedCornerShape(2.dp))
+        )
     }
 }
 
